@@ -1,78 +1,28 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace JAAVLTreeLib
 {
-    public sealed class BinarySearchTree<T> : ICollection<T> where T : IComparable<T>, IEquatable<T>
+    public sealed class BinarySearchTree<T> : BinaryTree<T> where T : IComparable<T>, IEquatable<T>
     {
-        public int Count { get; private set; }
-
-        public bool IsReadOnly { get; }
-
-        public Node<T> Root { get; private set; }
-
-        public void Add(T item) => Insert(item);
-
-        public void Clear()
-        {
-            this.Root = null;
-            this.Count = 0;
-        }
-
-        public bool Contains(T item) => Search(item) != null;
-
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            if (array == null)
-            {
-                throw new ArgumentNullException(nameof(array));
-            }
-
-            if (arrayIndex < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(arrayIndex));
-            }
-
-            if (arrayIndex + this.Count > array.Length)
-            {
-                throw new ArgumentException("The number of elements in the source" + nameof(BinarySearchTree<T>) +
-                    "is greater than the available space from" + nameof(arrayIndex) +
-                    "to the end of the destination " + nameof(array) + ".");
-            }
-
-            int i = 0;
-            foreach (T item in this)
-            {
-                array[arrayIndex + i] = item;
-                i++;
-            }
-        }
-
-        public IEnumerator<T> GetEnumerator() => this.Root.GetEnumerator();
-
-        public Node<T> Insert(T value)
+        public override BinaryNode<T> Insert(T key)
         {
             if (this.Root == null)
             {
-                this.Root = new Node<T>(value);
+                this.Root = new BinarySearchNode<T>(key);
                 this.Count++;
                 return this.Root;
             }
 
-            Node<T> currentNode = this.Root;
+            BinaryNode<T> currentNode = this.Root;
             while (true)
             {
-                int compare = Compare(value, currentNode.Key);
+                int compare = Compare(key, currentNode.Key);
 
                 if (compare < 0)
                 {
                     if (currentNode.ChildA == null)
                     {
-                        currentNode.ChildA = new Node<T>(value, currentNode);
+                        currentNode.ChildA = new BinarySearchNode<T>(key, currentNode);
                         this.Count++;
                         return currentNode.ChildA;
                     }
@@ -87,7 +37,7 @@ namespace JAAVLTreeLib
 
                 if (currentNode.ChildB == null)
                 {
-                    currentNode.ChildB = new Node<T>(value, currentNode);
+                    currentNode.ChildB = new BinarySearchNode<T>(key, currentNode);
                     this.Count++;
                     return currentNode.ChildB;
                 }
@@ -96,15 +46,15 @@ namespace JAAVLTreeLib
             }
         }
 
-        public bool Remove(T item)
+        public override bool Remove(T item)
         {
             if (this.Root == null)
             {
                 return false;
             }
 
-            Node<T> node = Search(item);
-            if (node == default(Node<T>))
+            BinaryNode<T> node = Search(item);
+            if (node == default(BinaryNode<T>))
             {
                 return false;
             }
@@ -128,7 +78,7 @@ namespace JAAVLTreeLib
                 return true;
             }
 
-            Node<T> successer;
+            BinaryNode<T> successer;
             if (node.ChildA == null || node.ChildB == null)
             {
                 successer = node.ChildA ?? node.ChildB;
@@ -161,9 +111,9 @@ namespace JAAVLTreeLib
             return true;
         }
 
-        public Node<T> Search(T key)
+        public override BinaryNode<T> Search(T key)
         {
-            Node<T> currentNode = this.Root;
+            BinaryNode<T> currentNode = this.Root;
             while (currentNode != null)
             {
                 int compare = Compare(key, currentNode.Key);
@@ -181,31 +131,7 @@ namespace JAAVLTreeLib
                 currentNode = currentNode.ChildB;
             }
 
-            return default(Node<T>);
+            return default(BinaryNode<T>);
         }
-
-        private static int Compare(T x, T y)
-        {
-            if (IsDefault(x) && IsDefault(y))
-            {
-                return 0;
-            }
-
-            if (IsDefault(x))
-            {
-                return 1;
-            }
-
-            if (IsDefault(y))
-            {
-                return -1;
-            }
-
-            return x.CompareTo(y);
-        }
-
-        private static bool IsDefault(T val) => EqualityComparer<T>.Default.Equals(val, default(T));
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
