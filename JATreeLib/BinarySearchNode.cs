@@ -19,9 +19,9 @@ namespace JAAVLTreeLib
 
         public override IEnumerator<T> GetEnumerator()
         {
-            if (this.ChildA != null)
+            if (this.LeftChild != null)
             {
-                foreach (T v in this.ChildA)
+                foreach (T v in this.LeftChild)
                 {
                     yield return v;
                 }
@@ -29,9 +29,9 @@ namespace JAAVLTreeLib
 
             yield return this.Key;
 
-            if (this.ChildB != null)
+            if (this.RightChild != null)
             {
-                foreach (T v in this.ChildB)
+                foreach (T v in this.RightChild)
                 {
                     yield return v;
                 }

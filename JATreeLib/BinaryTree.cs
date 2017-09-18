@@ -66,12 +66,12 @@ namespace JAAVLTreeLib
 
             if (IsDefault(x))
             {
-                return 1;
+                return -1;
             }
 
             if (IsDefault(y))
             {
-                return -1;
+                return 1;
             }
 
             // x isn't null at this point.

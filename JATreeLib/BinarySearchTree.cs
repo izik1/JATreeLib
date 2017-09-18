@@ -2,7 +2,7 @@
 
 namespace JAAVLTreeLib
 {
-    public sealed class BinarySearchTree<T> : BinaryTree<T> where T : IComparable<T>, IEquatable<T>
+    public class BinarySearchTree<T> : BinaryTree<T> where T : IComparable<T>, IEquatable<T>
     {
         public override BinaryNode<T> Insert(T key)
         {
@@ -20,76 +20,77 @@ namespace JAAVLTreeLib
 
                 if (compare < 0)
                 {
-                    if (currentNode.ChildA == null)
+                    if (currentNode.LeftChild == null)
                     {
-                        currentNode.ChildA = new BinarySearchNode<T>(key, currentNode);
+                        currentNode.LeftChild = new BinarySearchNode<T>(key, currentNode);
                         this.Count++;
-                        return currentNode.ChildA;
+                        return currentNode.LeftChild;
                     }
 
-                    currentNode = currentNode.ChildA;
+                    currentNode = currentNode.LeftChild;
+                    continue;
                 }
 
                 if (compare == 0)
                 {
-                    return currentNode;
+                    return currentNode; // Allow duplicates?
                 }
 
-                if (currentNode.ChildB == null)
+                if (currentNode.RightChild == null)
                 {
-                    currentNode.ChildB = new BinarySearchNode<T>(key, currentNode);
+                    currentNode.RightChild = new BinarySearchNode<T>(key, currentNode);
                     this.Count++;
-                    return currentNode.ChildB;
+                    return currentNode.RightChild;
                 }
 
-                currentNode = currentNode.ChildB;
+                currentNode = currentNode.RightChild;
             }
         }
 
-        public override bool Remove(T item)
-        {
-            if (this.Root == null)
-            {
-                return false;
-            }
+        public override bool Remove(T item) => Remove(Search(item)) != null;
 
-            BinaryNode<T> node = Search(item);
+        protected BinaryNode<T> Remove(BinaryNode<T> node)
+        {
             if (node == default(BinaryNode<T>))
             {
-                return false;
+                return null;
             }
 
             this.Count--;
-            if (node.ChildA == null && node.ChildB == null)
+            if (node.LeftChild == null && node.RightChild == null)
             {
                 if (node.Parent == null)
                 {
                     this.Root = null;
                 }
-                else if (node.Parent.ChildA == node)
+                else if (node.Parent.LeftChild == node)
                 {
-                    node.Parent.ChildA = null;
+                    node.Parent.LeftChild = null;
                 }
                 else
                 {
-                    node.Parent.ChildB = null;
+                    node.Parent.RightChild = null;
                 }
 
-                return true;
+                return node.Parent;
             }
 
             BinaryNode<T> successer;
-            if (node.ChildA == null || node.ChildB == null)
+            BinaryNode<T> parent;
+            if (node.LeftChild == null || node.RightChild == null)
             {
-                successer = node.ChildA ?? node.ChildB;
+                successer = node.LeftChild ?? node.RightChild;
+                parent = node.Parent;
             }
             else
             {
-                successer = node.ChildB;
-                while (successer.ChildA != null)
+                successer = node.RightChild;
+                while (successer.LeftChild != null)
                 {
-                    successer = successer.ChildA;
+                    successer = successer.LeftChild;
                 }
+
+                parent = successer.Parent;
             }
 
             if (node.Parent == null)
@@ -97,22 +98,27 @@ namespace JAAVLTreeLib
                 this.Root = successer;
                 successer.Parent = null;
             }
-            else if (node.Parent.ChildA == node)
+            else if (node.Parent.LeftChild == node)
             {
-                node.Parent.ChildA = successer;
+                node.Parent.LeftChild = successer;
                 successer.Parent = node.Parent;
             }
             else
             {
-                node.Parent.ChildB = successer;
-                node.ChildA.Parent = successer;
+                node.Parent.RightChild = successer;
+                node.LeftChild.Parent = successer;
             }
 
-            return true;
+            return parent;
         }
 
         public override BinaryNode<T> Search(T key)
         {
+            if (this.Root == null)
+            {
+                return default(BinaryNode<T>);
+            }
+
             BinaryNode<T> currentNode = this.Root;
             while (currentNode != null)
             {
@@ -120,7 +126,8 @@ namespace JAAVLTreeLib
 
                 if (compare < 0)
                 {
-                    currentNode = currentNode.ChildA;
+                    currentNode = currentNode.LeftChild;
+                    continue;
                 }
 
                 if (compare == 0)
@@ -128,7 +135,7 @@ namespace JAAVLTreeLib
                     return currentNode;
                 }
 
-                currentNode = currentNode.ChildB;
+                currentNode = currentNode.RightChild;
             }
 
             return default(BinaryNode<T>);

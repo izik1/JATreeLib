@@ -9,8 +9,8 @@ namespace JAAVLTreeLib
         {
             this.Key = key;
             this.Parent = parent;
-            this.ChildA = childA;
-            this.ChildB = childB;
+            this.LeftChild = childA;
+            this.RightChild = childB;
         }
 
         protected BinaryNode(T key, BinaryNode<T> parent)
@@ -21,15 +21,21 @@ namespace JAAVLTreeLib
 
         protected BinaryNode(T key) => this.Key = key;
 
-        public BinaryNode<T> ChildA { get; set; }
+        public int Balance { get; set; }
 
-        public BinaryNode<T> ChildB { get; set; }
+        public BinaryNode<T> LeftChild { get; set; }
+
+        public BinaryNode<T> RightChild { get; set; }
 
         public T Key { get; }
 
         public BinaryNode<T> Parent { get; set; }
 
         public abstract IEnumerator<T> GetEnumerator();
+
+        public bool IsLeftChild => this.Parent != null && this.Parent.LeftChild == this;
+
+        public bool IsRightChild => this.Parent != null && this.Parent.RightChild == this;
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }

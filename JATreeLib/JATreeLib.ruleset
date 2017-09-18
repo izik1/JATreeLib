@@ -245,6 +245,7 @@
   </Rules>
   <Rules AnalyzerId="Roslynator.CSharp.Analyzers" RuleNamespace="Roslynator.CSharp.Analyzers">
     <Rule Id="RCS1007" Action="Warning" />
+    <Rule Id="RCS1010" Action="None" />
     <Rule Id="RCS1012" Action="Warning" />
     <Rule Id="RCS1013" Action="Warning" />
     <Rule Id="RCS1014" Action="Warning" />
@@ -264,7 +265,6 @@
     <Rule Id="RCS1040" Action="Warning" />
     <Rule Id="RCS1046" Action="Warning" />
     <Rule Id="RCS1050" Action="Warning" />
-    <Rule Id="RCS1051" Action="Warning" />
     <Rule Id="RCS1052" Action="Warning" />
     <Rule Id="RCS1056" Action="Warning" />
     <Rule Id="RCS1060" Action="Warning" />
@@ -303,7 +303,6 @@
     <Rule Id="S121" Action="Warning" />
     <Rule Id="S122" Action="Warning" />
     <Rule Id="S1226" Action="Warning" />
-    <Rule Id="S1227" Action="Warning" />
     <Rule Id="S1244" Action="Warning" />
     <Rule Id="S126" Action="Warning" />
     <Rule Id="S127" Action="Warning" />
